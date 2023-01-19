@@ -1,9 +1,11 @@
-import { Text, StyleSheet, Modal, View, TouchableOpacity, Dimensions, ScrollView, TouchableWithoutFeedback, Keyboard, Image } from 'react-native'
+import { Text, StyleSheet, Modal, Button, View, TouchableOpacity, Dimensions, 
+  ScrollView, TouchableWithoutFeedback, Keyboard, Image, Alert,
+} from 'react-native'
 import React from 'react'
 import { SwipeablePanel } from 'rn-swipeable-panel'
 import FormsController, { Props } from './FormsController'
 import { TextInput } from 'react-native-paper'
-import { apple, expense, foodDrink, fuel, gift, income, loan, salary, shopping } from '../../assets'
+import { apple, electricity, expense, foodDrink, fuel, gift, income, loan, salary, shopping } from '../../assets'
 import { faCalendar, faStickyNote, faFileLines } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
 import { Dropdown } from 'react-native-element-dropdown'
@@ -21,7 +23,7 @@ export default class Forms extends FormsController {
     { label: 'Shopping', value: '3', image: shopping },
     { label: 'Other Expense', value: '4', image: expense },
     { label: 'Credits & Loan', value: '5', image: loan },
-    { label: 'Gift', value: '6', image: gift },
+    { label: 'Electricity', value: '6', image: electricity },
     { label: 'Salary', value: '7', image: salary },
     { label: 'Other Income', value: '8', image: income },
   ];
@@ -51,7 +53,7 @@ export default class Forms extends FormsController {
           style={styles.swipablePanelStyle} 
           onClose={this.closePanelHandler}
         >
-          <ScrollView keyboardDismissMode='none'> 
+          <ScrollView keyboardShouldPersistTaps={'always'} automaticallyAdjustKeyboardInsets={true} contentContainerStyle={{ flex: 1 }}>  
             <View>
               <Text style={styles.addTransactionText}>Add Transaction</Text>
             </View>
@@ -59,11 +61,10 @@ export default class Forms extends FormsController {
               <View>
                 <Text style={[styles.text, styles.USD]}>USD</Text>
               </View>
-              <TouchableWithoutFeedback onPress={Keyboard.dismiss} style={styles.amountInputContainer}>
+              <TouchableWithoutFeedback style={styles.amountInputContainer}>
                 <TextInput
                   maxLength={10}
                   keyboardType='number-pad'
-                  showSoftInputOnFocus={false}
                   placeholderTextColor={"#01182D"}
                   value={amount}
                   onChangeText={this.onChangeAmountHandler}
@@ -101,11 +102,11 @@ export default class Forms extends FormsController {
                 valueField="value"
                 placeholder={'Select Expense'}
                 value={dropdownValue}
-                onChange={item => {
+                onChange={({value, image, label}) => {
                   this.setState({ 
-                    dropdownValue: item.value, 
-                    dropdownImage: item.image,
-                    dropdownLabel: item.label
+                    dropdownValue: value, 
+                    dropdownImage: image,
+                    dropdownLabel: label
                   })
                 }}
               />
@@ -162,8 +163,23 @@ export default class Forms extends FormsController {
                   <TextInput 
                   accessibilityLabelledBy={undefined} 
                   accessibilityLanguage={undefined} 
-                  style={styles.notesInput} />
+                  style={styles.notesInput}
+                  maxLength={100}
+                  multiline={true}
+                  onChangeText={this.onChangeNotesHandler} />
                 </View>
+            </View>
+            <View style={{
+              display: 'flex',
+              justifyContent:'center',
+              alignItems: 'center',
+              marginTop: 35,
+            }}>
+              <TouchableOpacity onPress={this.createTransaction} style={{
+                  backgroundColor: "#01182D",
+              }}>
+                <Text style={[styles.text, { padding: 12 }]}>Create Transaction</Text>
+              </TouchableOpacity>
             </View>
           </ScrollView>
         </SwipeablePanel>
@@ -200,7 +216,7 @@ const styles = StyleSheet.create({
     left: 10
   },
   swipablePanelStyle: {
-    height: Dimensions.get('window').height - 150,
+    height: Dimensions.get('window').height - 300,
   },
   addTransactionText: {
     textAlign: 'center',

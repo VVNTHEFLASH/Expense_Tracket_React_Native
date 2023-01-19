@@ -14,3 +14,4 @@ export const loan = require("./assets/loan.png");
 export const shopping = require("./assets/shopping.png");
 export const income = require("./assets/income.png");
 export const dropdown = require("./assets/dropdown.png");
+export const electricity = require("./assets/electricity.png");
